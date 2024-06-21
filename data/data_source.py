@@ -5,8 +5,8 @@ from tqdm import tqdm
 
 from typing import Any
 
-from .ticker import Ticker, TickerList
-from .financials import FinancialsForTicker
+from data.ticker import Ticker, TickerList
+from data.financials import FinancialsForTicker
 
 
 class DataDB:
@@ -21,6 +21,7 @@ class DataDB:
         query = {
             "Financials.Balance_Sheet.yearly": {"$ne": None},
             "General.CountryISO": "US",
+            "General.Type": "Common Stock",
         }
         return self.db[self.FUNDAMENTALS].find(query)
 
@@ -47,7 +48,7 @@ class DataCsv:
 
             fundamentals = self.data_db.get_US_stocks_with_financial_reports()
 
-            for record in fundamentals:
+            for record in tqdm(fundamentals):
                 ticker = Ticker.from_db(record)
                 if ticker and ticker["Exchange"] in [
                     "NYSE",

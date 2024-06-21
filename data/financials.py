@@ -138,7 +138,7 @@ class FinancialsForTicker:
     all_statement_labels = (
         labels_balance_sheet + labels_cash_flow + labels_income_statement
     )
-    all_rolling_labels = [f"{label}_3yr_mean" for label in all_statement_labels]
+    all_rolling_labels = [f"{label}3YrMean" for label in all_statement_labels]
     all_labels = ["id", "year"] + all_statement_labels + all_rolling_labels
 
     @classmethod
@@ -170,6 +170,9 @@ class FinancialsForTicker:
             (income_statement, FinancialsForTicker.labels_income_statement),
         ]:
             for date, statement in report.items():
+                # only include statements reported in USD
+                if statement["currency_symbol"] != "USD":
+                    continue
                 year = parse_year(date)
 
                 for label in statement_labels:
@@ -182,7 +185,7 @@ class FinancialsForTicker:
         dataframe = pd.DataFrame.from_dict(data, orient="index").astype("float")
         dataframe_3yr_mean = pd.DataFrame(dataframe.rolling(3).mean())
         dataframe_3yr_mean = dataframe_3yr_mean.rename(
-            columns=lambda col: f"{col}_3yr_mean"
+            columns=lambda col: f"{col}3YrMean"
         )
         dataframe = dataframe.merge(
             dataframe_3yr_mean, left_index=True, right_index=True
