@@ -10,12 +10,16 @@ class SelectRandom(Model):
     def __init__(self, frac: float, predictions: pandas.DataFrame):
         assert frac > 0
         assert frac <= 1
+        assert len(predictions.columns) > 0
         assert predictions.columns.values[0] == SelectRandom.PREDICTION
         self.frac = frac
         self.predictions = predictions
 
     def __str__(self) -> str:
-        return f"Select Random Predictions (frac={self.frac*100:.2f}%)"
+        return f"Select Random Predictions Model (frac={self.frac*100:.2f}%)"
+
+    def init_model(self) -> None:
+        pass
 
     def fit(self, train_x: Any, train_y: Any) -> None:
         pass

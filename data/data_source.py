@@ -48,6 +48,7 @@ class DataCsv:
 
             fundamentals = self.data_db.get_US_stocks_with_financial_reports()
 
+            print(f"Generate content for {self.tickers_csv}")
             for record in tqdm(fundamentals):
                 ticker = Ticker.from_db(record)
                 if ticker and ticker["Exchange"] in [
@@ -63,6 +64,7 @@ class DataCsv:
 
             tickers = TickerList.from_csv(self.tickers_csv.as_posix())
 
+            print(f"Generate content for {self.financials_csv}")
             for id in tqdm(tickers["id"]):
                 fundamentals = self.data_db.get_financials_by_id(id)
                 financials = FinancialsForTicker.from_db(fundamentals)
