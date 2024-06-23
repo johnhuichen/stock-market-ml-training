@@ -1,15 +1,14 @@
-from typing import Any, Optional
+from typing import Any
 
 
 class Model:
     def __str__(self) -> str:
         raise Exception("not implemented")
 
-    def fit(self, x: Any, y: Any) -> None:
+    def fit(self, train_x: Any, train_y: Any) -> None:
         raise Exception("not implemented")
 
-    # passing dataset allows model to cheat
-    def predict(self, x: Any, dataset: Any) -> Any:
+    def predict(self, val_x: Any) -> Any:
         raise Exception("not implemented")
 
     def visualize(self) -> None:

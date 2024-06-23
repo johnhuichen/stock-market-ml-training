@@ -1,4 +1,4 @@
-import pandas as pd
+import pandas
 from typing import Optional, Self, Any
 
 
@@ -21,7 +21,7 @@ class Ticker:
         data = {l: general[l] if l in general else "" for l in Ticker.all_labels}
         data["id"] = document["_id"]
         series = (
-            pd.Series(data=data, dtype=str)
+            pandas.Series(data=data, dtype=str)
             .fillna("")
             .map(lambda x: x.replace(",", "").strip())
         )
@@ -32,7 +32,7 @@ class Ticker:
     def to_csv_header(cls) -> str:
         return f"{','.join(Ticker.all_labels)}\n"
 
-    def __init__(self, series: pd.Series) -> None:
+    def __init__(self, series: pandas.Series) -> None:
         self.series = series
 
     def __getitem__(self, key: str) -> Any:
@@ -45,9 +45,9 @@ class Ticker:
 class TickerList:
     @classmethod
     def from_csv(cls, csv_file: str) -> Self:
-        return cls(pd.read_csv(csv_file, dtype="str"))
+        return cls(pandas.read_csv(csv_file, dtype="str"))
 
-    def __init__(self, dataframe: pd.DataFrame) -> None:
+    def __init__(self, dataframe: pandas.DataFrame) -> None:
         self.dataframe = dataframe
 
     def __getitem__(self, key: str) -> Any:

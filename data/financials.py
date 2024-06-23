@@ -1,5 +1,5 @@
 from numpy import NaN
-import pandas as pd
+import pandas
 import operator
 from functools import reduce
 
@@ -182,8 +182,8 @@ class FinancialsForTicker:
                         continue
                     data[(id, year)][label] = float(value) if value else None
 
-        dataframe = pd.DataFrame.from_dict(data, orient="index").astype("float")
-        dataframe_3yr_mean = pd.DataFrame(dataframe.rolling(3).mean())
+        dataframe = pandas.DataFrame.from_dict(data, orient="index").astype("float")
+        dataframe_3yr_mean = pandas.DataFrame(dataframe.rolling(3).mean())
         dataframe_3yr_mean = dataframe_3yr_mean.rename(
             columns=lambda col: f"{col}3YrMean"
         )
@@ -197,7 +197,7 @@ class FinancialsForTicker:
     def to_csv_header(cls) -> str:
         return f"{','.join(FinancialsForTicker.all_labels)}\n"
 
-    def __init__(self, dataframe: pd.DataFrame) -> None:
+    def __init__(self, dataframe: pandas.DataFrame) -> None:
         self.dataframe = dataframe
 
     def __getitem__(self, key: str) -> Any:
