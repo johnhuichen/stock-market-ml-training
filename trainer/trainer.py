@@ -8,7 +8,7 @@ from models.model import Model
 
 class Trainer:
     def __init__(self, dataset_x: pandas.DataFrame, dataset_y: pandas.DataFrame):
-        assert len(dataset_x.columns) > 1
+        assert len(dataset_x.columns) > 0
         assert len(dataset_y.columns) == 1
 
         self.dataset_x = dataset_x
