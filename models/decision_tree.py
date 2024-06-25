@@ -18,7 +18,7 @@ class DecisionTree(Model):
             "max_leaf_nodes": self.max_leaf_nodes,
         }
         params_str = ", ".join([f"{k}={v}" for k, v in params.items()])
-        return f"Decision Tree Model ({params_str})"
+        return f"Decision Tree Model({params_str})"
 
     def init_model(self) -> None:
         self.model = DecisionTreeClassifier(max_leaf_nodes=self.max_leaf_nodes)
@@ -33,7 +33,7 @@ class DecisionTree(Model):
     def visualize(self) -> None:
         size = 10
         ratio = 0.6
-        precision = 7
+        precision = 2
 
         s = str(
             export_graphviz(

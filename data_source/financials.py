@@ -138,9 +138,6 @@ class FinancialsForTicker:
     all_statement_labels = (
         labels_balance_sheet + labels_cash_flow + labels_income_statement
     )
-    # TODO: delete
-    # all_rolling_labels = [f"{label}3YrMean" for label in all_statement_labels]
-    # all_labels = ["id", "year"] + all_statement_labels + all_rolling_labels
     all_labels = ["id", "year"] + all_statement_labels
 
     @classmethod
@@ -182,14 +179,6 @@ class FinancialsForTicker:
                     data[(id, year)][label] = float(value) if value else None
 
         dataframe = pandas.DataFrame.from_dict(data, orient="index").astype("float")
-        # TODO: delete
-        # dataframe_3yr_mean = pandas.DataFrame(dataframe.rolling(3).mean())
-        # dataframe_3yr_mean = dataframe_3yr_mean.rename(
-        #     columns=lambda col: f"{col}3YrMean"
-        # )
-        # dataframe = dataframe.merge(
-        #     dataframe_3yr_mean, left_index=True, right_index=True
-        # )
 
         return cls(dataframe)
 

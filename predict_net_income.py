@@ -1,66 +1,47 @@
-from matplotlib import pyplot as plt
-
-from models.select_random import SelectRandom
-from scenarios.fixed_period_net_income import FixedPeriodNetIncomeScenario
+from data_loader.future_net_income import FutureNetIncomeDataLoader
+from metrics.future_net_income import NetIncomeMetric
 from models.decision_tree import DecisionTree
 from models.random_forest import RandomForest
+from models.select_random import SelectRandom
 from models.select_top import SelectTop
+from trainer.trainer import Trainer
+
+dataloader = FutureNetIncomeDataLoader()
+dataset_x, future_net_incomes = dataloader.get()
+# dataset_x = dataset_x.xs(2016, level=1)
+# future_net_incomes = future_net_incomes.xs(2016, level=1)
+
+# Predict if net income exceeds 10%
+threshold = 0.1
+dataset_y = (
+    future_net_incomes.loc[:, [FutureNetIncomeDataLoader.RETURN_FUTURE]] > threshold
+)
+
+trainer = Trainer(dataset_x, dataset_y)
 
 
-scenario = FixedPeriodNetIncomeScenario(2010, 2015)
+def get_metric(model):
+    predictions, val_y = trainer.train(model)
+    return NetIncomeMetric(
+        model=model,
+        predictions=predictions,
+        val_y=val_y,
+        future_net_incomes=future_net_incomes,
+    )
 
-# # Decision Tree almost always performs worse than random forest
-# decision_tree_model = DecisionTree(max_leaf_nodes=18)
-# decision_tree_metric = scenario.train(decision_tree_model)
-# print(decision_tree_metric)
-# decision_tree_model.visualize()
-#
+
+decision_tree_model = DecisionTree(max_leaf_nodes=5)
 random_forest_model = RandomForest()
-random_forest_metric = scenario.train(random_forest_model)
-print(random_forest_metric)
-
-# # Benchmark select top 50% performing tickers
 select_top_model = SelectTop(
-    frac=0.5, sorted_predictions=scenario.sorted_predictions(), ascending=False
+    frac=0.5,
+    cheatsheet=future_net_incomes,
+    sort_by_col=FutureNetIncomeDataLoader.RETURN_FUTURE,
+    ascending=False,
 )
-select_top_metric = scenario.train(select_top_model)
-print(select_top_metric)
+select_random_model = SelectRandom(0.5)
 
-select_random_model = SelectRandom(frac=0.5, predictions=scenario.sorted_predictions())
-select_random_metric = scenario.train(select_random_model)
-print(select_random_metric)
-
-plt.plot(
-    ["random forest", "select top", "select random"],
-    [
-        m.value()
-        for m in [random_forest_metric, select_top_metric, select_random_metric]
-    ],
-)
-plt.show()
-
-# epochs = 10
-#
-# max_leaf_nodes_list = range(17, 40)
-# scenarios = [scenario]
-# models = [
-#     DecisionTree(max_leaf_nodes=max_leaf_nodes)
-#     for max_leaf_nodes in max_leaf_nodes_list
-# ]
-#
-# result = [
-#     (scenario.train_mean_metric(model), scenario, model)
-#     for model in models
-#     for scenario in scenarios
-# ]
-#
-# sorted_result = sorted(result, key=lambda x: x[0], reverse=True)
-#
-# for metric_mean, scenario, model in sorted_result:
-#     print(scenario)
-#     print(model)
-#     print(f"Mean Metric: {metric_mean:.2f}%")
-#
-#
-# plt.plot(max_leaf_nodes_list, [m for m, _, _ in result])
-# plt.show()
+print(get_metric(select_top_model))
+print(get_metric(select_random_model))
+print(get_metric(random_forest_model))
+print(get_metric(decision_tree_model))
+decision_tree_model.visualize()

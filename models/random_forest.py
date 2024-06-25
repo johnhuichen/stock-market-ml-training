@@ -20,8 +20,8 @@ class RandomForest(Model):
             "min_samples_leaf": self.min_samples_leaf,
             "criterion": self.criterion,
         }
-        params_str = ",\n\t".join([f"{k}={v}" for k, v in params.items()])
-        return f"Random Forest Model\n\t({params_str})"
+        params_str = ", ".join([f"{k}={v}" for k, v in params.items()])
+        return f"Random Forest Model({params_str})"
 
     def init_model(self) -> None:
         self.model = RandomForestClassifier(

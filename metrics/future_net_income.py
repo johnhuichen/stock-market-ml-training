@@ -1,40 +1,41 @@
 import functools
 
 import pandas
+import numpy
 
 
+from data_loader.future_net_income import FutureNetIncomeDataLoader
 from models.model import Model
 from metrics.metric import Metric
-from scenarios.scenario import Scenario
 
 
 @functools.total_ordering
-class FixedPeriodNetIncomeMetric(Metric):
+class NetIncomeMetric(Metric):
     def __init__(
         self,
-        scenario: Scenario,
         model: Model,
-        selected_returns: pandas.DataFrame,
-        all_returns: pandas.DataFrame,
+        predictions: pandas.DataFrame,
+        val_y: pandas.DataFrame,
+        future_net_incomes: pandas.DataFrame,
     ):
-        assert len(selected_returns.columns) == 1
-
-        self.scenario = scenario
         self.model = model
 
-        sort_by = selected_returns.columns.values[0]
+        RETURN_FUTURE = FutureNetIncomeDataLoader.RETURN_FUTURE
+        selected_index = val_y.iloc[numpy.where(predictions)].index
+        self.selected_returns = future_net_incomes.loc[selected_index, [RETURN_FUTURE]]
         self.selected_returns = (
-            selected_returns.sort_values(by=sort_by, ascending=False)[[sort_by]] * 100
+            self.selected_returns.sort_values(by=RETURN_FUTURE, ascending=False)[
+                [RETURN_FUTURE]
+            ]
+            * 100
         )
 
         self.best_picks = self.selected_returns.iloc[:5, :]
         self.worst_picks = self.selected_returns.iloc[-5:, :]
-        self.portfolio_return = self.selected_returns[sort_by].mean()
-
-        self.all_returns = all_returns.sort_values(by=sort_by, ascending=False) * 100
+        self.portfolio_return = self.selected_returns[RETURN_FUTURE].mean()
 
         self.dataframe_formatters = {
-            sort_by: "{:,.2f}%".format,
+            RETURN_FUTURE: "{:,.2f}%".format,
         }
 
     def value(self) -> float:
@@ -46,7 +47,6 @@ class FixedPeriodNetIncomeMetric(Metric):
 
 Description: Measure average return of portfolio picked by the model
              Average Return = Future Net Income / Present Total Assets
-Scenario: {self.scenario}
 Model: {self.model}
 Result: {self.portfolio_return:.2f}%
 Portfolio Size: {len(self.selected_returns)}
@@ -55,7 +55,7 @@ Worst Picks: {self.worst_picks.to_string(formatters=self.dataframe_formatters)}
         """
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, FixedPeriodNetIncomeMetric):
+        if not isinstance(other, NetIncomeMetric):
             raise Exception(
                 "NetIncomeMetric can only be compared with another NetIncomeMetric"
             )
@@ -63,7 +63,7 @@ Worst Picks: {self.worst_picks.to_string(formatters=self.dataframe_formatters)}
         return other.portfolio_return == self.portfolio_return
 
     def __lt__(self, other) -> bool:
-        if not isinstance(other, FixedPeriodNetIncomeMetric):
+        if not isinstance(other, NetIncomeMetric):
             raise Exception(
                 "NetIncomeMetric can only be compared with another NetIncomeMetric"
             )
