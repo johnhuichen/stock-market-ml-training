@@ -12,7 +12,6 @@ class RandomForest(Model):
         self.n_estimators = n_estimators
         self.min_samples_leaf = min_samples_leaf
         self.criterion = criterion
-        self.columns = []
         self.init_model()
 
     def __str__(self):
@@ -32,7 +31,6 @@ class RandomForest(Model):
         )
 
     def fit(self, train_x: pandas.DataFrame, train_y: pandas.DataFrame) -> None:
-        self.columns = train_x.columns
         self.model.fit(train_x, train_y.values.ravel())
 
     def predict(self, val_x: pandas.DataFrame) -> numpy.ndarray:

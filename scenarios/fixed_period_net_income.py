@@ -21,7 +21,9 @@ class FixedPeriodNetIncomeScenario(Scenario):
         self.year_x = year_x
         self.year_y = year_y
         self.threshold = threshold
-        self.financials_csv = Path(__file__ + "/../../data/financials.csv").resolve()
+        self.financials_csv = Path(
+            __file__ + "/../../data_source/financials.csv"
+        ).resolve()
         dataframe = pandas.read_csv(self.financials_csv, index_col=[0, 1])
 
         # only include data with valid total assets 3 year average
