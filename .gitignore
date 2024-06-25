@@ -8,7 +8,7 @@
 __pycache__/
 
 # large csvs
-data/*.csv
+*.csv
 
 # plots
 Source.gv*

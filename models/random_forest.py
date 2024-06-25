@@ -12,7 +12,6 @@ class RandomForest(Model):
         self.n_estimators = n_estimators
         self.min_samples_leaf = min_samples_leaf
         self.criterion = criterion
-        self.columns = []
         self.init_model()
 
     def __str__(self):
@@ -21,8 +20,8 @@ class RandomForest(Model):
             "min_samples_leaf": self.min_samples_leaf,
             "criterion": self.criterion,
         }
-        params_str = ",\n\t".join([f"{k}={v}" for k, v in params.items()])
-        return f"Random Forest Model\n\t({params_str})"
+        params_str = ", ".join([f"{k}={v}" for k, v in params.items()])
+        return f"Random Forest Model({params_str})"
 
     def init_model(self) -> None:
         self.model = RandomForestClassifier(
@@ -32,7 +31,6 @@ class RandomForest(Model):
         )
 
     def fit(self, train_x: pandas.DataFrame, train_y: pandas.DataFrame) -> None:
-        self.columns = train_x.columns
         self.model.fit(train_x, train_y.values.ravel())
 
     def predict(self, val_x: pandas.DataFrame) -> numpy.ndarray:

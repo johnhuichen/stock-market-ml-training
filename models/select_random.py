@@ -5,15 +5,10 @@ from typing import Any
 
 
 class SelectRandom(Model):
-    PREDICTION = "prediction"
-
-    def __init__(self, frac: float, predictions: pandas.DataFrame):
+    def __init__(self, frac: float):
         assert frac > 0
         assert frac <= 1
-        assert len(predictions.columns) > 0
-        assert predictions.columns.values[0] == SelectRandom.PREDICTION
         self.frac = frac
-        self.predictions = predictions
 
     def __str__(self) -> str:
         return f"Select Random Predictions Model (frac={self.frac*100:.2f}%)"
@@ -25,9 +20,8 @@ class SelectRandom(Model):
         pass
 
     def predict(self, val_x: pandas.DataFrame) -> Any:
-        val_y = self.predictions.loc[val_x.index]
-        selected_index = val_y.sample(frac=self.frac)[SelectRandom.PREDICTION].index
-        return val_x.index.isin(selected_index).astype(int)
+        selected_index = val_x.sample(frac=self.frac).index
+        return val_x.index.isin(selected_index)
 
     def visualize(self) -> None:
         pass
