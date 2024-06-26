@@ -4,7 +4,7 @@ from models.model import Model
 from typing import Any
 
 
-class SelectRandom(Model):
+class SelectRandomModel(Model):
     def __init__(self, frac: float):
         assert frac > 0
         assert frac <= 1

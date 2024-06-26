@@ -4,10 +4,10 @@ from pandas import pandas
 
 from data_loader.future_net_income import FutureNetIncomeDataLoader
 from metrics.future_net_income import NetIncomeMetric
-from models.decision_tree import DecisionTree
-from models.random_forest import RandomForest
-from models.select_random import SelectRandom
-from models.select_top import SelectTop
+from models.decision_tree_classifier import DecisionTreeClassiferModel
+from models.random_forest_classifier import RandomForestClassifierModel
+from models.select_random import SelectRandomModel
+from models.select_top import SelectTopModel
 from trainer.trainer import Trainer
 
 
@@ -48,25 +48,25 @@ def predict_any_period_exceeds_threshold(
     return dataset_x, dataset_y, future_net_incomes
 
 
-dataset_x, dataset_y, future_net_incomes = predict_fixed_period_exceeds_threshold(
-    year=2016, threshold=0.15
-)
-# dataset_x, dataset_y, future_net_incomes = predict_any_period_exceeds_threshold(0.15)
+# dataset_x, dataset_y, future_net_incomes = predict_fixed_period_exceeds_threshold(
+#     year=2016, threshold=0.15
+# )
+dataset_x, dataset_y, future_net_incomes = predict_any_period_exceeds_threshold(0.15)
 
 trainer = Trainer(dataset_x, dataset_y)
 
-decision_tree_model = DecisionTree(max_leaf_nodes=5)
-random_forest_model = RandomForest()
-select_top_model = SelectTop(
+decision_tree_model = DecisionTreeClassiferModel(max_leaf_nodes=5)
+random_forest_model = RandomForestClassifierModel()
+select_top_model = SelectTopModel(
     frac=0.5,
     cheatsheet=future_net_incomes,
     sort_by_col=FutureNetIncomeDataLoader.RETURN_FUTURE,
     ascending=False,
 )
-select_random_model = SelectRandom(0.5)
+select_random_model = SelectRandomModel(0.5)
 
-# print(get_metric(trainer, select_top_model))
-# print(get_metric(trainer, select_random_model, future_net_incomes))
-# print(get_metric(trainer, decision_tree_model, future_net_incomes))
+print(get_metric(trainer, select_top_model, future_net_incomes))
+print(get_metric(trainer, select_random_model, future_net_incomes))
+print(get_metric(trainer, decision_tree_model, future_net_incomes))
 print(get_metric(trainer, random_forest_model, future_net_incomes))
 # decision_tree_model.visualize()

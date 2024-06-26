@@ -7,18 +7,14 @@ import re
 from models.model import Model
 
 
-class DecisionTree(Model):
+class DecisionTreeClassiferModel(Model):
     def __init__(self, max_leaf_nodes=5):
         self.max_leaf_nodes = max_leaf_nodes
         self.columns = []
         self.init_model()
 
     def __str__(self):
-        params = {
-            "max_leaf_nodes": self.max_leaf_nodes,
-        }
-        params_str = ", ".join([f"{k}={v}" for k, v in params.items()])
-        return f"Decision Tree Model({params_str})"
+        return str(self.model)
 
     def init_model(self) -> None:
         self.model = DecisionTreeClassifier(max_leaf_nodes=self.max_leaf_nodes)
