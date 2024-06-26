@@ -32,8 +32,7 @@ def predict_fixed_period_exceeds_threshold(
     future_net_incomes = future_net_incomes.xs(year, level=1)
 
     dataset_y = (
-        future_net_incomes.loc[:, [FutureNetIncomeDataLoader.RETURN_FUTURE_COL]]
-        > threshold
+        future_net_incomes.loc[:, [FutureNetIncomeDataLoader.ROE_COl]] > threshold
     )
     return dataset_x, dataset_y, future_net_incomes
 
@@ -45,16 +44,17 @@ def predict_any_period_exceeds_threshold(
     dataset_x, future_net_incomes = dataloader.get()
 
     dataset_y = (
-        future_net_incomes.loc[:, [FutureNetIncomeDataLoader.RETURN_FUTURE_COL]]
-        > threshold
+        future_net_incomes.loc[:, [FutureNetIncomeDataLoader.ROE_COl]] > threshold
     )
     return dataset_x, dataset_y, future_net_incomes
 
 
+# This predicts next 10 yr future return average from 2001
 # dataset_x, dataset_y, future_net_incomes = predict_fixed_period_exceeds_threshold(
-#     year=2016, threshold=0.15
+#     year=2016, threshold=0.10
 # )
-dataset_x, dataset_y, future_net_incomes = predict_any_period_exceeds_threshold(0.15)
+# This predicts next 10 yr future return average of all periods
+dataset_x, dataset_y, future_net_incomes = predict_any_period_exceeds_threshold(0.10)
 
 trainer = Trainer(dataset_x, dataset_y)
 
@@ -64,13 +64,13 @@ hgb_model = HGBClassiferModel()
 select_top_model = SelectTopModel(
     frac=0.5,
     cheatsheet=future_net_incomes,
-    sort_by_col=FutureNetIncomeDataLoader.RETURN_FUTURE_COL,
+    sort_by_col=FutureNetIncomeDataLoader.ROE_COl,
     ascending=False,
 )
 select_random_model = SelectRandomModel(0.5)
 
-print(get_metric(trainer, select_top_model, future_net_incomes))
 print(get_metric(trainer, select_random_model, future_net_incomes))
+print(get_metric(trainer, select_top_model, future_net_incomes))
 print(get_metric(trainer, dt_model, future_net_incomes))
 print(get_metric(trainer, rf_model, future_net_incomes))
 print(get_metric(trainer, hgb_model, future_net_incomes))

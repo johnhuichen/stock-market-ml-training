@@ -20,22 +20,19 @@ class NetIncomeMetric(Metric):
     ):
         self.model = model
 
-        RETURN_FUTURE = FutureNetIncomeDataLoader.RETURN_FUTURE_COL
+        ROE = FutureNetIncomeDataLoader.ROE_COl
         selected_index = val_y.iloc[numpy.where(predictions)].index
-        self.selected_returns = future_net_incomes.loc[selected_index, [RETURN_FUTURE]]
+        self.selected_returns = future_net_incomes.loc[selected_index, [ROE]]
         self.selected_returns = (
-            self.selected_returns.sort_values(by=RETURN_FUTURE, ascending=False)[
-                [RETURN_FUTURE]
-            ]
-            * 100
+            self.selected_returns.sort_values(by=ROE, ascending=False)[[ROE]] * 100
         )
 
         self.best_picks = self.selected_returns.iloc[:5, :]
         self.worst_picks = self.selected_returns.iloc[-5:, :]
-        self.portfolio_return = self.selected_returns[RETURN_FUTURE].mean()
+        self.portfolio_return = self.selected_returns[ROE].mean()
 
         self.dataframe_formatters = {
-            RETURN_FUTURE: "{:,.2f}%".format,
+            ROE: "{:,.2f}%".format,
         }
 
     def value(self) -> float:
