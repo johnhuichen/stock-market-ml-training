@@ -20,7 +20,7 @@ class NetIncomeMetric(Metric):
     ):
         self.model = model
 
-        RETURN_FUTURE = FutureNetIncomeDataLoader.RETURN_FUTURE
+        RETURN_FUTURE = FutureNetIncomeDataLoader.RETURN_FUTURE_COL
         selected_index = val_y.iloc[numpy.where(predictions)].index
         self.selected_returns = future_net_incomes.loc[selected_index, [RETURN_FUTURE]]
         self.selected_returns = (

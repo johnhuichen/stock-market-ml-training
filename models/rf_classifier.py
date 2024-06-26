@@ -8,13 +8,13 @@ from models.model import Model
 N_CORES = joblib.cpu_count(only_physical_cores=True)
 
 
-class RandomForestClassifierModel(Model):
+class RFClassifierModel(Model):
     def __init__(
         self,
-        n_estimators: int = 100,
-        min_samples_leaf: int = 5,
-        criterion: str = "gini",
-        n_jobs: int = N_CORES,
+        n_estimators=100,
+        min_samples_leaf=5,
+        criterion="gini",
+        n_jobs=N_CORES,
     ):
         self.n_estimators = n_estimators
         self.min_samples_leaf = min_samples_leaf

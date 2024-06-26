@@ -7,8 +7,8 @@ import re
 from models.model import Model
 
 
-class DecisionTreeClassiferModel(Model):
-    def __init__(self, max_leaf_nodes=5):
+class DTClassiferModel(Model):
+    def __init__(self, max_leaf_nodes=None):
         self.max_leaf_nodes = max_leaf_nodes
         self.columns = []
         self.init_model()
