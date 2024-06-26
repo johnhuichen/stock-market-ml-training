@@ -6,7 +6,7 @@ from models.model import Model
 from typing import Any
 
 
-class SelectTop(Model):
+class SelectTopModel(Model):
     def __init__(
         self,
         frac: float,
@@ -23,7 +23,7 @@ class SelectTop(Model):
         self.ascending = ascending
 
     def __str__(self) -> str:
-        return f"Select Top Predictions Model {self.frac*100:.2f}%"
+        return f"Select Top Predictions Model (frac={self.frac*100:.2f}%)"
 
     def init_model(self) -> None:
         pass
