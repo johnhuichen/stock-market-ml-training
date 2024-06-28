@@ -1,6 +1,5 @@
 import sys
 import pandas
-from typing import List
 
 from dataloader.roa import RoADataLoader, RoAColumns
 

@@ -5,6 +5,7 @@ import pandas
 
 class RoAColumns:
     ROLLING_MEAN_SUFFIX = "RollingMean"
+    ROLLING_MEAN_FUTURE_SUFFIX = "RollingMeanFuture"
     NET_INCOME_COL = "netIncome"
     TOTAL_ASSETS_COL = "totalAssets"
     ROE_COl = "returnOnEquity"
@@ -12,6 +13,10 @@ class RoAColumns:
     @classmethod
     def get_col_mean(cls, col: str) -> str:
         return f"{col}{RoAColumns.ROLLING_MEAN_SUFFIX}"
+
+    @classmethod
+    def get_col_mean_future(cls, col: str) -> str:
+        return f"{col}{RoAColumns.ROLLING_MEAN_FUTURE_SUFFIX}"
 
 
 class RoADataLoader:
@@ -47,13 +52,16 @@ class RoADataLoader:
             ~financials[RoAColumns.get_col_mean(TOTAL_ASSETS_COL)].isnull()
         ]
 
-        dataset_y = (financials[target_col] / financials[TOTAL_ASSETS_COL]).to_frame(
-            ROE_COL
-        )
         dataset_y = (
-            dataset_y.rolling(forecast_window)
+            financials.loc[:, [target_col, TOTAL_ASSETS_COL]]
+            .rolling(forecast_window)
             .mean()
             .rename(index=lambda y: y - forecast_window, level=1)
+            .rename(columns=RoAColumns.get_col_mean_future)
+        )
+        dataset_y[ROE_COL] = (
+            dataset_y[RoAColumns.get_col_mean_future(target_col)]
+            / dataset_y[RoAColumns.get_col_mean_future(TOTAL_ASSETS_COL)]
         )
         dataset_y = dataset_y[~dataset_y[ROE_COL].isnull()]
 
