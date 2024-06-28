@@ -3,16 +3,21 @@ from typing import Tuple
 import pandas
 
 
-class FutureNetIncomeDataLoader:
-    MEAN_SUFFIX = "Mean"
-    FUTURE_MEAN_SUFFIX = "FutureMean"
-
+class RoAColumns:
+    ROLLING_MEAN_SUFFIX = "RollingMean"
+    NET_INCOME_COL = "netIncome"
     TOTAL_ASSETS_COL = "totalAssets"
     ROE_COl = "returnOnEquity"
 
+    @classmethod
+    def get_col_mean(cls, col: str) -> str:
+        return f"{col}{RoAColumns.ROLLING_MEAN_SUFFIX}"
+
+
+class RoADataLoader:
     def __init__(
         self,
-        target_col="netIncome",
+        target_col=RoAColumns.NET_INCOME_COL,
         rolling_window=3,
         forecast_window=5,
     ):
@@ -20,12 +25,8 @@ class FutureNetIncomeDataLoader:
         self.rolling_window = rolling_window
         self.forecast_window = forecast_window
 
-        MEAN_SUFFIX = FutureNetIncomeDataLoader.MEAN_SUFFIX
-        FUTURE_MEAN_SUFFIX = FutureNetIncomeDataLoader.FUTURE_MEAN_SUFFIX
-
-        ROE_COL = FutureNetIncomeDataLoader.ROE_COl
-        TOTAL_ASSETS_COL = FutureNetIncomeDataLoader.TOTAL_ASSETS_COL
-        TOTAL_ASSETS_MEAN_COL = f"{TOTAL_ASSETS_COL}{MEAN_SUFFIX}"
+        TOTAL_ASSETS_COL = RoAColumns.TOTAL_ASSETS_COL
+        ROE_COL = RoAColumns.ROE_COl
 
         self.financials_csv = Path(
             __file__ + "/../../data_source/financials.csv"
@@ -37,17 +38,16 @@ class FutureNetIncomeDataLoader:
         financials_rolling_mean = (
             financials.rolling(rolling_window)
             .mean()
-            .rename(columns=lambda col: f"{col}{MEAN_SUFFIX}")
+            .rename(columns=RoAColumns.get_col_mean)
         )
         financials = financials.merge(
             financials_rolling_mean, left_index=True, right_index=True
         )
-        dataset_x = financials[~financials[TOTAL_ASSETS_MEAN_COL].isnull()]
-
-        dataset_y = financials[
-            ~financials[target_col].isnull() & ~financials[TOTAL_ASSETS_COL].isnull()
+        dataset_x = financials[
+            ~financials[RoAColumns.get_col_mean(TOTAL_ASSETS_COL)].isnull()
         ]
-        dataset_y = (dataset_y[target_col] / dataset_y[TOTAL_ASSETS_COL]).to_frame(
+
+        dataset_y = (financials[target_col] / financials[TOTAL_ASSETS_COL]).to_frame(
             ROE_COL
         )
         dataset_y = (
