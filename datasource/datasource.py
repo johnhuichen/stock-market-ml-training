@@ -5,8 +5,8 @@ from tqdm import tqdm
 
 from typing import Any
 
-from data_source.ticker import Ticker, TickerList
-from data_source.financials import FinancialsForTicker
+from datasource.ticker import Ticker, TickerList
+from datasource.financials import FinancialsForTicker
 
 
 class DataDB:

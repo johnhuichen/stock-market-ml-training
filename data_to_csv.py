@@ -1,4 +1,4 @@
-from data_source.data_source import DataCsv
+from datasource.datasource import DataCsv
 
 data_csv = DataCsv()
 
