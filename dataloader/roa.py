@@ -34,7 +34,7 @@ class RoADataLoader:
         ROE_COL = RoAColumns.ROE_COl
 
         self.financials_csv = Path(
-            __file__ + "/../../data_source/financials.csv"
+            __file__ + "/../../datasource/financials.csv"
         ).resolve()
 
         financials = pandas.read_csv(self.financials_csv, index_col=[0, 1])
