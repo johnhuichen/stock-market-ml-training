@@ -51,7 +51,7 @@ class TestRoADataLoader(unittest.TestCase):
 
     def test_returns_x_y(self):
         financials = self.dummy_financials()
-        dataset_x, dataset_y = RoADataLoader(financials=financials).get()
+        dataset_x, dataset_y = RoADataLoader(financials=financials, cache=False).get()
 
         expected_x_dict = {
             "netIncome": {
