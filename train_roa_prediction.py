@@ -68,4 +68,4 @@ def train_roa_prediction() -> None:
     print(get_metric(trainer, dt_model, future_net_incomes))
     print(get_metric(trainer, rf_model, future_net_incomes))
     print(get_metric(trainer, hgb_model, future_net_incomes))
-    dt_model.visualize()
+    # dt_model.visualize()
