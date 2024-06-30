@@ -1,7 +1,6 @@
 import pandas
 from sklearn.model_selection import train_test_split
 
-from typing import Tuple
 
 from models.model import Model
 
@@ -23,12 +22,12 @@ class Trainer:
     def train_test_split(self) -> None:
         self.train_data, self.val_data = train_test_split(self.dataset, test_size=0.25)
 
-    def x_y_split(self, data) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
+    def x_y_split(self, data) -> tuple[pandas.DataFrame, pandas.DataFrame]:
         x = data.loc[:, data.columns != self.y_column]
         y = data.loc[:, data.columns == self.y_column]
         return x, y
 
-    def train(self, model: Model) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
+    def train(self, model: Model) -> tuple[pandas.DataFrame, pandas.DataFrame]:
         train_x, train_y = self.x_y_split(self.train_data)
         val_x, val_y = self.x_y_split(self.val_data)
 

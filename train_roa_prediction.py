@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from pandas import pandas
 
 from dataloader.roa import RoADataLoader, RoAColumns
@@ -24,7 +22,7 @@ def train_roa_prediction() -> None:
 
     def predict_fixed_period_exceeds_threshold(
         year: int, threshold: float
-    ) -> Tuple[pandas.DataFrame, pandas.DataFrame, pandas.DataFrame]:
+    ) -> tuple[pandas.DataFrame, pandas.DataFrame, pandas.DataFrame]:
         dataloader = RoADataLoader()
         dataset_x, future_net_incomes = dataloader.get()
 
@@ -36,7 +34,7 @@ def train_roa_prediction() -> None:
 
     def predict_any_period_exceeds_threshold(
         threshold: float,
-    ) -> Tuple[pandas.DataFrame, pandas.DataFrame, pandas.DataFrame]:
+    ) -> tuple[pandas.DataFrame, pandas.DataFrame, pandas.DataFrame]:
         dataloader = RoADataLoader()
         dataset_x, future_net_incomes = dataloader.get()
 

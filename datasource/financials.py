@@ -1,10 +1,11 @@
+from pathlib import Path
 from numpy import NaN
 import pandas
 import operator
 from functools import reduce
 
 
-from typing import Any, Self, Dict, Any
+from typing import Any, Self
 
 
 class FinancialsForTicker:
@@ -153,7 +154,7 @@ class FinancialsForTicker:
         id: str = document["_id"]
         dates = [date for report in reports for date in report.keys()]
         years = sorted(set(map(parse_year, dates)))
-        data: Dict[tuple[Any, int], dict[str, str | float | None]] = {
+        data: dict[tuple[Any, int], dict[str, str | float | None]] = {
             (id, year): {
                 label: NaN for label in FinancialsForTicker.all_statement_labels
             }
@@ -181,6 +182,11 @@ class FinancialsForTicker:
         dataframe = pandas.DataFrame.from_dict(data, orient="index").astype("float")
 
         return cls(dataframe)
+
+    @classmethod
+    def from_file(cls) -> pandas.DataFrame:
+        financials_csv = Path(__file__ + "/../financials.csv").resolve()
+        return pandas.read_csv(financials_csv, index_col=[0, 1])
 
     @classmethod
     def to_csv_header(cls) -> str:
