@@ -20,6 +20,7 @@ class DataDB:
     def get_US_stocks(self) -> Cursor:
         query = {
             "Financials.Balance_Sheet.yearly": {"$ne": None},
+            "General.Name": {"$not": {"$regex": "Trust$"}},
             "General.CountryISO": "US",
             "General.Type": "Common Stock",
             "General.Exchange": {

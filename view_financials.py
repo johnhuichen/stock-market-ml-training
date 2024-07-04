@@ -8,10 +8,11 @@ def view_financials(ticker: str, start: int, end: int) -> None:
     if end < start:
         sys.exit("Invalid parameters: start year is bigger than end year")
 
-    dataloader = RoADataLoader()
-    dataset_x, dataset_y = dataloader.get()
+    dataloader = RoADataLoader(read_financials_csv=True)
+    _, dataset_y = dataloader.get()
+    financials = dataloader.get_financials()
 
-    dataset_x = dataset_x.loc[ticker]
+    dataset_x = financials.loc[ticker]
     columns = [
         RoAColumns.TOTAL_ASSETS_COL,
         RoAColumns.NET_INCOME_COL,

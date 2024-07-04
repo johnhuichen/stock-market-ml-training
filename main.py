@@ -1,12 +1,16 @@
+#!/usr/bin/env python3
+
 import sys
 import argparse
 from datetime import datetime
 
+from prepare_data import prepare_data
 from train_roa_prediction import train_roa_prediction
 from view_financials import view_financials
 
 
 class Commands:
+    PREPARE_DATA = "prepare_data"
     TRAIN_ROE = "train_roe"
     VIEW_FINANCIALS = "view_financials"
 
@@ -18,6 +22,9 @@ if __name__ == "__main__":
     )
     subparsers = parser.add_subparsers(dest="cmd", help="Base Comands", required=True)
 
+    parser_prepare_data = subparsers.add_parser(
+        Commands.PREPARE_DATA, help="Prepare data from datasource"
+    )
     parser_train_roe = subparsers.add_parser(
         Commands.TRAIN_ROE, help=f"Train and Predict Return on Assets"
     )
@@ -47,6 +54,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     match args.cmd:
+        case Commands.PREPARE_DATA:
+            prepare_data()
         case Commands.TRAIN_ROE:
             train_roa_prediction()
         case Commands.VIEW_FINANCIALS:

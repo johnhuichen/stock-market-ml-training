@@ -12,3 +12,6 @@ __pycache__/
 
 # plots
 Source.gv*
+
+# logs
+*.log
