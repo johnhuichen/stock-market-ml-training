@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 import pandas
 
 from datasource.financials import FinancialsForTicker
@@ -27,17 +28,35 @@ class RoADataLoader:
         target_col=RoAColumns.NET_INCOME_COL,
         rolling_window=3,
         forecast_window=5,
-        financials: pandas.DataFrame = FinancialsForTicker.from_file(),
+        financials: Optional[pandas.DataFrame] = None,
         cache=True,
+        read_financials_csv=False,
     ):
+        if financials is None:
+            financials = FinancialsForTicker.from_file()
+
+        file_financials = (
+            f"{target_col}-{rolling_window}-{forecast_window}-financials.csv"
+        )
+        file_financials = Path(__file__ + f"/../{file_financials}").resolve()
         file_x = f"{target_col}-{rolling_window}-{forecast_window}-x.csv"
         file_x = Path(__file__ + f"/../{file_x}").resolve()
         file_y = f"{target_col}-{rolling_window}-{forecast_window}-y.csv"
         file_y = Path(__file__ + f"/../{file_y}").resolve()
 
-        if cache and file_x.is_file() and file_y.is_file():
+        if (
+            cache
+            and file_x.is_file()
+            and file_y.is_file()
+            and file_financials.is_file()
+        ):
             self.dataset_x = pandas.read_csv(file_x, index_col=[0, 1])
             self.dataset_y = pandas.read_csv(file_y, index_col=[0, 1])
+            self.dataset_financials = (
+                pandas.read_csv(file_financials, index_col=[0, 1])
+                if read_financials_csv
+                else pandas.DataFrame([])
+            )
         else:
             self.target_col = target_col
             self.rolling_window = rolling_window
@@ -46,7 +65,8 @@ class RoADataLoader:
             TOTAL_ASSETS_COL = RoAColumns.TOTAL_ASSETS_COL
             ROE_COL = RoAColumns.ROE_COl
 
-            excluded_tickers = ["BPT.US", "CRKN.US", "CGNT.US", "MARPS.US"]
+            # excluded_tickers = ["BPT.US", "CRKN.US", "CGNT.US", "MARPS.US"]
+            excluded_tickers = []
 
             index = financials.index.isin(excluded_tickers, level=0)
             financials = financials[~index] / 1e6  # represent numbers in millions
@@ -81,10 +101,15 @@ class RoADataLoader:
 
             self.dataset_x = dataset_x.loc[dataset_x.index.isin(dataset_y.index)]
             self.dataset_y = dataset_y.loc[dataset_y.index.isin(dataset_x.index)]
+            self.dataset_financials = financials
 
             if cache:
                 self.dataset_x.to_csv(file_x)
                 self.dataset_y.to_csv(file_y)
+                self.dataset_financials.to_csv(file_financials)
 
     def get(self) -> tuple[pandas.DataFrame, pandas.DataFrame]:
         return self.dataset_x, self.dataset_y
+
+    def get_financials(self) -> pandas.DataFrame:
+        return self.dataset_financials

@@ -40,7 +40,8 @@ class RoAMetric(Metric):
 
     def __str__(self) -> str:
         divider_length = 10
-        return f"""{"="*divider_length} Metrics {"="*divider_length}
+        return f"""
+{"="*divider_length} Metrics {"="*divider_length}
 
 Description: Measure average return of portfolio picked by the model
              Return on Assets (RoA) = Net Income / Total Assets
@@ -49,7 +50,7 @@ Portfolio RoA: {self.portfolio_return:.2f}%
 Portfolio Size: {len(self.selected_returns)}
 Best Picks: {self.best_picks.to_string(formatters=self.dataframe_formatters)}
 Worst Picks: {self.worst_picks.to_string(formatters=self.dataframe_formatters)}
-        """
+"""
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, RoAMetric):
