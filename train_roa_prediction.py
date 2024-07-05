@@ -4,7 +4,7 @@ from collections import defaultdict
 from metrics.metric import Metric
 from models.model import Model
 from trainer.trainer import Trainer
-from logger.logger import Logger
+from logger.logger import LoggerFactory
 
 from dataloader.roa import RoADataLoader, RoAColumns
 from metrics.roa import RoAMetric
@@ -49,19 +49,20 @@ def train_roa_prediction() -> None:
         return dataset_x, dataset_y, future_net_incomes
 
     # This predicts next 5 yr future return average from 2016
-    dataset_x, dataset_y, future_net_incomes = predict_fixed_period_exceeds_threshold(
-        year=2016, threshold=0.10
-    )
-    # This predicts next 5 yr future return average of all periods
-    # dataset_x, dataset_y, future_net_incomes = predict_any_period_exceeds_threshold(
-    #     0.10
+    # dataset_x, dataset_y, future_net_incomes = predict_fixed_period_exceeds_threshold(
+    #     year=2016, threshold=0.10
     # )
+    # This predicts next 5 yr future return average of all periods
+    dataset_x, dataset_y, future_net_incomes = predict_any_period_exceeds_threshold(
+        0.10
+    )
 
-    trainer = Trainer(dataset_x, dataset_y)
-    logger = Logger("train_roa_prediction").get(__name__)
+    logger_factory = LoggerFactory("train_roa_prediction")
+    logger = logger_factory.create(__name__)
+    trainer = Trainer(dataset_x, dataset_y, split_by_index="id")
 
     metric_dict: defaultdict[str, list[Metric]] = defaultdict(list)
-    for _ in range(20):
+    for _ in range(10):
         model_dict = {
             "Select Random": SelectRandomModel(0.5),
             "Select Top": SelectTopModel(
@@ -79,7 +80,7 @@ def train_roa_prediction() -> None:
         for name, model in model_dict.items():
             metric = get_metric(trainer, model, future_net_incomes)
             logger.info(metric)
-            # if name == "Random Forest":
+            # if name in ["Random Forest", "Histogram-gradient Boosting"]:
             metric_dict[name].append(metric)
 
     for name, metrics in metric_dict.items():
