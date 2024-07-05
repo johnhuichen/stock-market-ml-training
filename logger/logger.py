@@ -3,7 +3,7 @@ import logging
 from logging import handlers
 
 
-class Logger:
+class LoggerFactory:
     def __init__(self, filename: str):
         file_handler = handlers.RotatingFileHandler(
             filename=Path(__file__).with_name(f"{filename}.log"),
@@ -20,5 +20,5 @@ class Logger:
             handlers=[file_handler],
         )
 
-    def get(self, name: str) -> logging.Logger:
+    def create(self, name: str) -> logging.Logger:
         return logging.getLogger(name)
